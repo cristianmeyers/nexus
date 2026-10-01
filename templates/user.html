@@ -1,0 +1,1368 @@
+<!doctype html>
+<html lang="fr" class="dark" id="html-root">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WAKEJS | Control Center - Management Utilisateurs</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = { darkMode: "class" };
+    </script>
+    <!-- FontAwesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body
+    class="bg-gray-100 dark:bg-slate-950 min-h-screen font-sans text-gray-800 dark:text-gray-100 p-4 md:p-8 flex items-center justify-center transition-colors duration-300"
+  >
+    <!-- Toast Notification Container -->
+    <div
+      id="toast-container"
+      class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"
+    ></div>
+
+    <!-- ==================== MODALE DE VUE HISTORIQUE DES ACTIONS ==================== -->
+    <div
+      id="historyModal"
+      class="fixed inset-0 z-50 hidden bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4"
+    >
+      <div
+        class="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-6 w-full max-w-2xl shadow-2xl space-y-5 animate-in fade-in zoom-in duration-200 my-8 max-h-[85vh] flex flex-col"
+      >
+        <!-- Header Modale Historique -->
+        <div
+          class="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-slate-800 shrink-0"
+        >
+          <div class="flex items-center gap-3">
+            <div
+              class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-sm shadow-md"
+            >
+              <i class="fas fa-clock-rotate-left"></i>
+            </div>
+            <div>
+              <h3
+                id="historyModalTitle"
+                class="font-black text-base text-slate-900 dark:text-white"
+              >
+                Historique d'activité
+              </h3>
+              <p id="historyModalSub" class="text-[11px] text-slate-400">
+                Journal d'audit des actions effectuées par l'utilisateur
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onclick="closeHistoryModal()"
+            class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+          >
+            <i class="fas fa-xmark text-xl"></i>
+          </button>
+        </div>
+
+        <!-- Timeline / Liste des actions -->
+        <div class="flex-1 overflow-y-auto pr-1 space-y-3" id="historyTimeline">
+          <!-- Injecté dynamiquement -->
+        </div>
+
+        <!-- Footer Modale -->
+        <div
+          class="pt-3 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center shrink-0"
+        >
+          <span class="text-[10px] font-bold text-slate-400" id="historyCount"
+            >0 événement(s) enregistré(s)</span
+          >
+          <button
+            type="button"
+            onclick="closeHistoryModal()"
+            class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-xs hover:bg-slate-200 transition-all"
+          >
+            Fermer
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== MODALE ÉDITION / CRÉATION UTILISATEUR ==================== -->
+    <div
+      id="userModal"
+      class="fixed inset-0 z-50 hidden bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto"
+    >
+      <div
+        class="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-6 w-full max-w-2xl shadow-2xl space-y-5 animate-in fade-in zoom-in duration-200 my-8"
+      >
+        <!-- Header Modale Édition -->
+        <div
+          class="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-slate-800"
+        >
+          <div class="flex items-center gap-3">
+            <div
+              class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center text-sm shadow-md"
+            >
+              <i class="fas fa-user-gear"></i>
+            </div>
+            <div>
+              <h3
+                id="modalTitle"
+                class="font-black text-base text-slate-900 dark:text-white"
+              >
+                Édition Utilisateur
+              </h3>
+              <p class="text-[11px] text-slate-400">
+                Configurez la source, les rôles, groupes et autorisations
+                spécifiques
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onclick="closeUserModal()"
+            class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+          >
+            <i class="fas fa-xmark text-xl"></i>
+          </button>
+        </div>
+
+        <form id="userForm" onsubmit="handleSaveUser(event)" class="space-y-5">
+          <input type="hidden" id="userId" />
+
+          <!-- Section 1 : Source & Informations Générales -->
+          <div class="space-y-3">
+            <h4
+              class="text-[11px] font-black uppercase text-blue-500 tracking-wider flex items-center gap-2"
+            >
+              <i class="fas fa-id-card"></i> Origine du compte & Identification
+            </h4>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label
+                  class="block text-[10px] font-black uppercase text-slate-400 mb-1"
+                  >Source d'authentification</label
+                >
+                <select
+                  id="userType"
+                  onchange="toggleAccountTypeFields()"
+                  class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs font-bold text-slate-800 dark:text-slate-100 outline-none focus:border-blue-500"
+                >
+                  <option value="Local">Base de données (Local)</option>
+                  <option value="AD">Active Directory / LDAP</option>
+                </select>
+              </div>
+
+              <div>
+                <label
+                  class="block text-[10px] font-black uppercase text-slate-400 mb-1"
+                  >Rôle Système</label
+                >
+                <select
+                  id="userRole"
+                  class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs font-bold text-slate-800 dark:text-slate-100 outline-none focus:border-blue-500"
+                >
+                  <option value="Administrateur">Administrateur</option>
+                  <option value="Technicien">Technicien</option>
+                  <option value="Utilisateur">Utilisateur</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label
+                  class="block text-[10px] font-black uppercase text-slate-400 mb-1"
+                  >Nom Complet</label
+                >
+                <input
+                  type="text"
+                  id="userName"
+                  required
+                  class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs font-bold text-slate-800 dark:text-slate-100 outline-none focus:border-blue-500"
+                  placeholder="ex: Jean Dupont"
+                />
+              </div>
+
+              <div>
+                <label
+                  class="block text-[10px] font-black uppercase text-slate-400 mb-1"
+                  >Adresse Email</label
+                >
+                <input
+                  type="email"
+                  id="userEmail"
+                  required
+                  class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs font-bold text-slate-800 dark:text-slate-100 outline-none focus:border-blue-500"
+                  placeholder="jean.dupont@entreprise.local"
+                />
+              </div>
+            </div>
+
+            <!-- Mot de passe (Local uniquement) -->
+            <div
+              id="passwordSection"
+              class="bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900/50 p-3 rounded-2xl space-y-2"
+            >
+              <div class="flex items-center justify-between">
+                <label
+                  class="text-[10px] font-black uppercase text-blue-600 dark:text-blue-400 flex items-center gap-1.5"
+                >
+                  <i class="fas fa-key"></i> Changement de Mot de passe
+                </label>
+                <span id="pwdNotice" class="text-[9px] text-slate-400 font-bold"
+                  >Laisser vide pour ne pas modifier</span
+                >
+              </div>
+              <input
+                type="password"
+                id="userPassword"
+                class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs font-bold text-slate-800 dark:text-slate-100 outline-none focus:border-blue-500"
+                placeholder="••••••••••••"
+              />
+            </div>
+
+            <!-- Information Active Directory -->
+            <div
+              id="adNoticeSection"
+              class="hidden bg-amber-500/10 border border-amber-500/20 p-3 rounded-2xl text-[11px] text-amber-600 dark:text-amber-400 font-bold flex items-center gap-2"
+            >
+              <i class="fas fa-shield-halved text-base"></i>
+              <span
+                >Ce compte provient de l'Active Directory. La modification du
+                mot de passe doit être réalisée directement sur votre contrôleur
+                de domaine.</span
+              >
+            </div>
+          </div>
+
+          <!-- Section 2 : Groupes d'appartenance -->
+          <div
+            class="space-y-2 pt-2 border-t border-slate-200 dark:border-slate-800"
+          >
+            <h4
+              class="text-[11px] font-black uppercase text-blue-500 tracking-wider flex items-center gap-2"
+            >
+              <i class="fas fa-layer-group"></i> Groupes d'appartenance
+            </h4>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              <label
+                class="flex items-center gap-2 p-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold cursor-pointer hover:border-blue-500"
+              >
+                <input
+                  type="checkbox"
+                  value="Administrateurs Sys"
+                  class="user-group-cb accent-blue-600 rounded"
+                />
+                <span>Admins Sys</span>
+              </label>
+              <label
+                class="flex items-center gap-2 p-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold cursor-pointer hover:border-blue-500"
+              >
+                <input
+                  type="checkbox"
+                  value="Infrastructure"
+                  class="user-group-cb accent-blue-600 rounded"
+                />
+                <span>Infrastructure</span>
+              </label>
+              <label
+                class="flex items-center gap-2 p-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold cursor-pointer hover:border-blue-500"
+              >
+                <input
+                  type="checkbox"
+                  value="Support IT"
+                  class="user-group-cb accent-blue-600 rounded"
+                />
+                <span>Support IT</span>
+              </label>
+              <label
+                class="flex items-center gap-2 p-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold cursor-pointer hover:border-blue-500"
+              >
+                <input
+                  type="checkbox"
+                  value="Helpdesk"
+                  class="user-group-cb accent-blue-600 rounded"
+                />
+                <span>Helpdesk</span>
+              </label>
+              <label
+                class="flex items-center gap-2 p-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold cursor-pointer hover:border-blue-500"
+              >
+                <input
+                  type="checkbox"
+                  value="Lecture Seule"
+                  class="user-group-cb accent-blue-600 rounded"
+                />
+                <span>Lecture Seule</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Section 3 : Droits d'accès spécifiques -->
+          <div
+            class="space-y-2 pt-2 border-t border-slate-200 dark:border-slate-800"
+          >
+            <h4
+              class="text-[11px] font-black uppercase text-blue-500 tracking-wider flex items-center gap-2"
+            >
+              <i class="fas fa-lock"></i> Droits d'accès spécifiques
+            </h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <label
+                class="flex items-center gap-2.5 p-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  value="wol_exec"
+                  class="user-perm-cb accent-blue-600 rounded"
+                />
+                <div>
+                  <div>Émission Paquets WOL</div>
+                  <div class="text-[9px] text-slate-400 font-normal">
+                    Allumage / Extinction à distance
+                  </div>
+                </div>
+              </label>
+              <label
+                class="flex items-center gap-2.5 p-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  value="fog_deploy"
+                  class="user-perm-cb accent-blue-600 rounded"
+                />
+                <div>
+                  <div>Déploiement d'images FOG</div>
+                  <div class="text-[9px] text-slate-400 font-normal">
+                    Masterisation système et restauration
+                  </div>
+                </div>
+              </label>
+              <label
+                class="flex items-center gap-2.5 p-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  value="users_manage"
+                  class="user-perm-cb accent-blue-600 rounded"
+                />
+                <div>
+                  <div>Gestion Utilisateurs</div>
+                  <div class="text-[9px] text-slate-400 font-normal">
+                    Création et modification des comptes
+                  </div>
+                </div>
+              </label>
+              <label
+                class="flex items-center gap-2.5 p-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  value="settings_edit"
+                  class="user-perm-cb accent-blue-600 rounded"
+                />
+                <div>
+                  <div>Configuration Globale</div>
+                  <div class="text-[9px] text-slate-400 font-normal">
+                    Accès aux paramètres WAKEJS
+                  </div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Section État du compte -->
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-200 dark:border-slate-800"
+          >
+            <div>
+              <label
+                class="block text-[10px] font-black uppercase text-slate-400 mb-1"
+                >Autorisation / État</label
+              >
+              <select
+                id="userAccountState"
+                class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs font-bold text-slate-800 dark:text-slate-100 outline-none focus:border-blue-500"
+              >
+                <option value="active">Compte Actif (Autorisé)</option>
+                <option value="suspended">Compte Suspendu / Inactif</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Footer Modale Édition -->
+          <div
+            class="pt-4 border-t border-slate-200 dark:border-slate-800 flex justify-end gap-2"
+          >
+            <button
+              type="button"
+              onclick="closeUserModal()"
+              class="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-xs hover:bg-slate-200 transition-all"
+            >
+              Annuler
+            </button>
+            <button
+              type="submit"
+              class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition-all"
+            >
+              Enregistrer
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Cadre extérieur principal -->
+    <div
+      class="w-full max-w-7xl h-[90vh] bg-white/50 dark:bg-slate-900/50 backdrop-blur-md rounded-[2.5rem] p-4 border-2 border-slate-300 dark:border-slate-800 shadow-2xl flex flex-col md:flex-row gap-4 overflow-hidden"
+    >
+      <!-- Sidebar Gauche -->
+      <aside
+        class="w-full md:w-80 bg-white dark:bg-slate-900 rounded-3xl p-5 border-2 border-slate-200 dark:border-slate-800 flex flex-col justify-between shrink-0 overflow-y-auto shadow-sm"
+      >
+        <div class="space-y-6">
+          <!-- Profil Utilisateur Courant -->
+          <div
+            class="bg-gradient-to-r from-blue-50 to-slate-50 dark:from-slate-800 dark:to-slate-800/80 p-3 rounded-2xl border-2 border-blue-200 dark:border-slate-700 flex items-center justify-between shadow-sm"
+          >
+            <div class="flex items-center gap-3">
+              <div
+                class="w-10 h-10 rounded-xl bg-blue-600 text-white font-black flex items-center justify-center text-xs tracking-wider shadow-md shadow-blue-500/20"
+              >
+                AD
+              </div>
+              <div class="flex flex-col">
+                <span
+                  class="font-bold text-sm tracking-tight text-slate-800 dark:text-slate-100"
+                  >Admin User</span
+                >
+                <span
+                  class="text-[10px] text-blue-500 font-extrabold uppercase tracking-widest"
+                  >Administrateur</span
+                >
+              </div>
+            </div>
+            <button
+              class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300"
+            >
+              <i class="fas fa-bars text-base"></i>
+            </button>
+          </div>
+
+          <!-- Section Menu -->
+          <div class="space-y-3">
+            <h3
+              class="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 px-1"
+            >
+              Menu
+            </h3>
+            <nav class="space-y-2">
+              <button
+                onclick="switchView('settings')"
+                id="nav-settings"
+                class="nav-btn w-full flex items-center gap-3 p-3 rounded-2xl border-2 border-transparent bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 font-bold text-sm transition-all text-left"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs"
+                >
+                  <i class="fas fa-cog"></i>
+                </div>
+                <span>Settings</span>
+              </button>
+
+              <button
+                onclick="switchView('theme')"
+                id="nav-theme"
+                class="nav-btn w-full flex items-center gap-3 p-3 rounded-2xl border-2 border-transparent bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 font-bold text-sm transition-all text-left"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs"
+                >
+                  <i class="fas fa-palette"></i>
+                </div>
+                <span>Theme</span>
+              </button>
+
+              <button
+                onclick="switchView('users')"
+                id="nav-users"
+                class="nav-btn active w-full flex items-center gap-3 p-3 rounded-2xl border-2 border-blue-500 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold text-sm transition-all text-left"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs shadow-sm"
+                >
+                  <i class="fas fa-users"></i>
+                </div>
+                <span>Utilisateurs</span>
+              </button>
+            </nav>
+          </div>
+
+          <!-- Section Modules -->
+          <div class="space-y-3">
+            <h3
+              class="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 px-1"
+            >
+              Modules
+            </h3>
+            <nav class="space-y-2">
+              <button
+                onclick="switchView('dashboard')"
+                id="nav-dashboard"
+                class="nav-btn w-full flex items-center gap-3 p-3 rounded-2xl border-2 border-transparent bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 font-bold text-sm transition-all text-left"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs"
+                >
+                  <i class="fas fa-chart-pie"></i>
+                </div>
+                <span>DashBoard</span>
+              </button>
+
+              <button
+                onclick="switchView('wake')"
+                id="nav-wake"
+                class="nav-btn w-full flex items-center gap-3 p-3 rounded-2xl border-2 border-transparent bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 font-bold text-sm transition-all text-left"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs"
+                >
+                  <i class="fas fa-network-wired"></i>
+                </div>
+                <span>Wake On Lan</span>
+              </button>
+
+              <button
+                onclick="switchView('fog')"
+                id="nav-fog"
+                class="nav-btn w-full flex items-center gap-3 p-3 rounded-2xl border-2 border-transparent bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 font-bold text-sm transition-all text-left"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs"
+                >
+                  <i class="fas fa-compact-disc"></i>
+                </div>
+                <span>Fog Image Viewer</span>
+              </button>
+            </nav>
+          </div>
+        </div>
+
+        <!-- Footer Sidebar -->
+        <div
+          class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-6 flex items-center justify-between"
+        >
+          <div>
+            <h1
+              class="text-xl font-black italic tracking-tighter text-slate-900 dark:text-white"
+            >
+              WAKE<span class="text-blue-500">JS</span>
+            </h1>
+            <p
+              class="text-[9px] uppercase tracking-[0.2em] font-bold text-gray-400"
+            >
+              Control Center
+            </p>
+          </div>
+          <button
+            onclick="toggleDarkMode()"
+            title="Basculer le thème"
+            class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-blue-500 transition-colors"
+          >
+            <i id="themeIcon" class="fas fa-sun"></i>
+          </button>
+        </div>
+      </aside>
+
+      <!-- Zone d'affichage Principale -->
+      <main
+        class="flex-1 bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-8 border-2 border-slate-200 dark:border-slate-800 flex flex-col overflow-y-auto relative"
+      >
+        <!-- Top Bar -->
+        <div
+          class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-slate-200 dark:border-slate-800 mb-6 shrink-0"
+        >
+          <div>
+            <h2
+              id="pageTitle"
+              class="text-3xl font-black italic tracking-tight text-slate-900 dark:text-white uppercase"
+            >
+              Utilisateurs
+            </h2>
+            <p
+              id="pageSub"
+              class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1"
+            >
+              Sessions en direct, groupe principal, privilèges et journaux
+              d'audit
+            </p>
+          </div>
+
+          <div
+            id="wolActions"
+            class="hidden items-center gap-3 w-full sm:w-auto"
+          >
+            <button
+              onclick="showToast('PING émis', 'info')"
+              class="bg-blue-600 text-white px-5 py-3 rounded-2xl font-bold text-xs"
+            >
+              <i class="fas fa-sync-alt"></i> PING
+            </button>
+            <button
+              onclick="showToast('Signal WOL transmis !', 'success')"
+              class="bg-green-600 text-white px-5 py-3 rounded-2xl font-bold text-xs"
+            >
+              <i class="fas fa-bolt"></i> WAKE
+            </button>
+          </div>
+        </div>
+
+        <!-- Contenu dynamique -->
+        <div id="contentBox" class="flex-1 space-y-6">
+          <!-- VUE UTILISATEURS -->
+          <div id="view-users" class="view-panel space-y-6">
+            <!-- Cartes de statistiques -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div
+                class="bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl flex items-center justify-between"
+              >
+                <div>
+                  <p
+                    class="text-[10px] font-black uppercase text-slate-400 tracking-wider"
+                  >
+                    Total Comptes
+                  </p>
+                  <h4
+                    id="stat-total"
+                    class="text-2xl font-black text-slate-800 dark:text-slate-100 mt-1"
+                  >
+                    0
+                  </h4>
+                </div>
+                <div
+                  class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center font-bold"
+                >
+                  <i class="fas fa-users text-lg"></i>
+                </div>
+              </div>
+
+              <div
+                class="bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl flex items-center justify-between"
+              >
+                <div>
+                  <p
+                    class="text-[10px] font-black uppercase text-slate-400 tracking-wider"
+                  >
+                    Sessions Connectées
+                  </p>
+                  <h4
+                    id="stat-online"
+                    class="text-2xl font-black text-emerald-500 mt-1"
+                  >
+                    0
+                  </h4>
+                </div>
+                <div
+                  class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center font-bold"
+                >
+                  <i class="fas fa-plug text-lg"></i>
+                </div>
+              </div>
+
+              <div
+                class="bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl flex items-center justify-between"
+              >
+                <div>
+                  <p
+                    class="text-[10px] font-black uppercase text-slate-400 tracking-wider"
+                  >
+                    Comptes Active Directory
+                  </p>
+                  <h4
+                    id="stat-ad"
+                    class="text-2xl font-black text-indigo-500 mt-1"
+                  >
+                    0
+                  </h4>
+                </div>
+                <div
+                  class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center font-bold"
+                >
+                  <i class="fas fa-network-wired text-lg"></i>
+                </div>
+              </div>
+
+              <div
+                class="bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl flex items-center justify-between"
+              >
+                <div>
+                  <p
+                    class="text-[10px] font-black uppercase text-slate-400 tracking-wider"
+                  >
+                    Inactifs / Suspendus
+                  </p>
+                  <h4
+                    id="stat-inactive"
+                    class="text-2xl font-black text-rose-500 mt-1"
+                  >
+                    0
+                  </h4>
+                </div>
+                <div
+                  class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-500 flex items-center justify-center font-bold"
+                >
+                  <i class="fas fa-user-slash text-lg"></i>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recherche & Action Ajouter -->
+            <div
+              class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3"
+            >
+              <div class="relative flex-1 max-w-md">
+                <i
+                  class="fas fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"
+                ></i>
+                <input
+                  type="text"
+                  id="userSearch"
+                  oninput="filterUsers()"
+                  placeholder="Rechercher nom, email, groupe, rôle..."
+                  class="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 rounded-2xl pl-9 pr-4 py-2.5 text-xs font-bold text-slate-800 dark:text-slate-100 outline-none focus:border-blue-500 transition-all"
+                />
+              </div>
+
+              <button
+                onclick="openUserModal()"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-2xl font-black text-xs uppercase tracking-wider shadow-md transition-all flex items-center justify-center gap-2 active:scale-95"
+              >
+                <i class="fas fa-user-plus"></i><span>Nouvel Utilisateur</span>
+              </button>
+            </div>
+
+            <!-- Tableau Principale des Utilisateurs -->
+            <div
+              class="bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm"
+            >
+              <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                  <thead>
+                    <tr
+                      class="border-b border-slate-200 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-800/50 text-[10px] uppercase font-black tracking-wider text-slate-400"
+                    >
+                      <th class="py-3.5 px-4">Utilisateur</th>
+                      <th class="py-3.5 px-4">Source</th>
+                      <th class="py-3.5 px-4">Rôle</th>
+                      <th class="py-3.5 px-4">Groupe Principal</th>
+                      <th class="py-3.5 px-4">Statut Session</th>
+                      <th class="py-3.5 px-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody
+                    id="usersTableBody"
+                    class="divide-y divide-slate-200 dark:divide-slate-800/60 text-xs"
+                  >
+                    <!-- Contenu dynamique JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- AUTRES PANNEAUX (Placeholders) -->
+          <div id="view-settings" class="view-panel hidden">
+            <p class="text-xs text-slate-400 text-center py-10">
+              Paramètres système
+            </p>
+          </div>
+          <div id="view-theme" class="view-panel hidden">
+            <p class="text-xs text-slate-400 text-center py-10">
+              Gestion des thèmes
+            </p>
+          </div>
+          <div id="view-dashboard" class="view-panel hidden">
+            <p class="text-xs text-slate-400 text-center py-10">
+              Tableau de bord
+            </p>
+          </div>
+          <div id="view-wake" class="view-panel hidden">
+            <p class="text-xs text-slate-400 text-center py-10">Wake-On-Lan</p>
+          </div>
+          <div id="view-fog" class="view-panel hidden">
+            <p class="text-xs text-slate-400 text-center py-10">
+              Fog Image Viewer
+            </p>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Script JavaScript -->
+    <script>
+      // Données de test enrichies avec l'état de connexion réel et l'historique d'actions
+      let usersList = [
+        {
+          id: 1,
+          initials: "AD",
+          name: "Admin User",
+          email: "admin@wakejs.local",
+          type: "Local",
+          role: "Administrateur",
+          groups: ["Administrateurs Sys", "Infrastructure", "Support IT"],
+          permissions: [
+            "wol_exec",
+            "fog_deploy",
+            "users_manage",
+            "settings_edit",
+          ],
+          isConnected: true, // Session active en ce moment
+          isSuspended: false,
+          history: [
+            {
+              id: 101,
+              timestamp: "29/09/2026 13:20",
+              action: "Connexion réussie",
+              ip: "192.168.1.50",
+              details: "Session administrateur initiée",
+            },
+            {
+              id: 102,
+              timestamp: "29/09/2026 13:15",
+              action: "Envoi Paquet WOL",
+              ip: "192.168.1.50",
+              details: "Signal transmis à PC-FINANCE-01 (00:1A:2B:3C:4D:5E)",
+            },
+            {
+              id: 103,
+              timestamp: "28/09/2026 16:42",
+              action: "Modification Utilisateur",
+              ip: "192.168.1.50",
+              details: "Mise à jour des privilèges de Thomas Dubois",
+            },
+            {
+              id: 104,
+              timestamp: "25/09/2026 09:10",
+              action: "Déploiement FOG",
+              ip: "192.168.1.50",
+              details: "Masterisation lancée sur Salle-Informatique-B",
+            },
+          ],
+        },
+        {
+          id: 2,
+          initials: "TD",
+          name: "Thomas Dubois",
+          email: "t.dubois@entreprise.local",
+          type: "AD",
+          role: "Technicien",
+          groups: ["Support IT", "Helpdesk"],
+          permissions: ["wol_exec", "fog_deploy"],
+          isConnected: true, // Session active
+          isSuspended: false,
+          history: [
+            {
+              id: 201,
+              timestamp: "29/09/2026 12:45",
+              action: "Connexion LDAP/AD",
+              ip: "192.168.1.88",
+              details: "Authentification via le contrôleur de domaine",
+            },
+            {
+              id: 202,
+              timestamp: "29/09/2026 12:50",
+              action: "Exécution PING",
+              ip: "192.168.1.88",
+              details: "Diagnostic réseau effectué sur plage 192.168.1.0/24",
+            },
+          ],
+        },
+        {
+          id: 3,
+          initials: "LB",
+          name: "Lucas Bernard",
+          email: "l.bernard@entreprise.local",
+          type: "AD",
+          role: "Technicien",
+          groups: ["Support IT"],
+          permissions: ["wol_exec"],
+          isConnected: false, // Hors ligne
+          isSuspended: false,
+          history: [
+            {
+              id: 301,
+              timestamp: "27/09/2026 17:30",
+              action: "Déconnexion",
+              ip: "192.168.1.102",
+              details: "Fermeture propre de la session",
+            },
+            {
+              id: 302,
+              timestamp: "27/09/2026 14:10",
+              action: "Envoi Paquet WOL",
+              ip: "192.168.1.102",
+              details: "Allumage distant du poste LAB-DEV-03",
+            },
+          ],
+        },
+        {
+          id: 4,
+          initials: "SM",
+          name: "Sophie Martin",
+          email: "s.martin@wakejs.local",
+          type: "Local",
+          role: "Utilisateur",
+          groups: ["Lecture Seule"],
+          permissions: [],
+          isConnected: false,
+          isSuspended: true, // Compte désactivé/suspendu
+          history: [
+            {
+              id: 401,
+              timestamp: "15/09/2026 11:00",
+              action: "Compte Suspendu",
+              ip: "192.168.1.50",
+              details: "Désactivation du compte par Admin User",
+            },
+          ],
+        },
+      ];
+
+      function renderUsersTable(list = usersList) {
+        const tbody = document.getElementById("usersTableBody");
+        tbody.innerHTML = "";
+
+        if (list.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="6" class="py-8 text-center text-slate-400 font-bold text-xs">
+                Aucun utilisateur trouvé.
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        list.forEach((u) => {
+          // Source Badge (AD ou Local)
+          let typeBadge =
+            u.type === "AD"
+              ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-black uppercase bg-indigo-500/10 text-indigo-400 border border-indigo-500/20" title="Active Directory / LDAP"><i class="fas fa-network-wired text-[9px]"></i> AD</span>`
+              : `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-black uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" title="Base de données locale"><i class="fas fa-database text-[9px]"></i> Local</span>`;
+
+          // Rôle
+          let roleBadge = "";
+          if (u.role === "Administrateur") {
+            roleBadge = `<span class="font-bold text-slate-800 dark:text-slate-100">Admin</span>`;
+          } else if (u.role === "Technicien") {
+            roleBadge = `<span class="font-bold text-blue-500">Technicien</span>`;
+          } else {
+            roleBadge = `<span class="font-bold text-slate-400">Utilisateur</span>`;
+          }
+
+          // Affichage RÉSUMÉ du groupe (Groupe principal + nombre d'autres groupes)
+          let primaryGroupHTML = "";
+          if (u.groups && u.groups.length > 0) {
+            const firstGroup = u.groups[0];
+            const extraCount = u.groups.length - 1;
+
+            primaryGroupHTML = `<div class="flex items-center gap-1.5">
+              <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-bold text-[11px] text-slate-700 dark:text-slate-300">${firstGroup}</span>
+              ${extraCount > 0 ? `<span class="px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-500 font-black text-[10px]" title="${u.groups.join(", ")}">+${extraCount}</span>` : ""}
+            </div>`;
+          } else {
+            primaryGroupHTML = `<span class="text-slate-400 italic text-[11px]">Aucun</span>`;
+          }
+
+          // Statut de connexion en direct
+          let statusBadge = "";
+          if (u.isSuspended) {
+            statusBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase bg-rose-500/10 text-rose-500 border border-rose-500/20"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Suspendu</span>`;
+          } else if (u.isConnected) {
+            statusBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> En ligne</span>`;
+          } else {
+            statusBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase bg-slate-500/10 text-slate-400 border border-slate-500/20"><span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> Hors ligne</span>`;
+          }
+
+          const tr = document.createElement("tr");
+          tr.className =
+            "hover:bg-slate-100/50 dark:hover:bg-slate-800/40 transition-colors";
+          tr.innerHTML = `
+            <td class="py-3.5 px-4">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-blue-600/10 text-blue-600 dark:text-blue-400 font-black flex items-center justify-center text-xs border border-blue-500/20 shrink-0">
+                  ${u.initials}
+                </div>
+                <div>
+                  <div class="font-bold text-slate-900 dark:text-slate-100">${u.name}</div>
+                  <div class="text-[11px] text-slate-400">${u.email}</div>
+                </div>
+              </div>
+            </td>
+            <td class="py-3.5 px-4">${typeBadge}</td>
+            <td class="py-3.5 px-4">${roleBadge}</td>
+            <td class="py-3.5 px-4">${primaryGroupHTML}</td>
+            <td class="py-3.5 px-4">${statusBadge}</td>
+            <td class="py-3.5 px-4 text-right">
+              <div class="flex items-center justify-end gap-1">
+                <!-- Bouton Historique des actions -->
+                <button onclick="openHistoryModal(${u.id})" title="Voir le journal d'activité" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 transition-colors flex items-center justify-center">
+                  <i class="fas fa-clock-rotate-left text-xs"></i>
+                </button>
+                <!-- Bouton Éditer -->
+                <button onclick="editUser(${u.id})" title="Modifier le compte" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-colors flex items-center justify-center">
+                  <i class="fas fa-pen-to-square text-xs"></i>
+                </button>
+                <!-- Bouton Supprimer -->
+                <button onclick="deleteUser(${u.id})" title="Supprimer le compte" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors flex items-center justify-center">
+                  <i class="fas fa-trash-can text-xs"></i>
+                </button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        updateStats();
+      }
+
+      function updateStats() {
+        document.getElementById("stat-total").innerText = usersList.length;
+        document.getElementById("stat-online").innerText = usersList.filter(
+          (u) => u.isConnected && !u.isSuspended,
+        ).length;
+        document.getElementById("stat-ad").innerText = usersList.filter(
+          (u) => u.type === "AD",
+        ).length;
+        document.getElementById("stat-inactive").innerText = usersList.filter(
+          (u) => u.isSuspended,
+        ).length;
+      }
+
+      function filterUsers() {
+        const query = document.getElementById("userSearch").value.toLowerCase();
+        const filtered = usersList.filter(
+          (u) =>
+            u.name.toLowerCase().includes(query) ||
+            u.email.toLowerCase().includes(query) ||
+            u.role.toLowerCase().includes(query) ||
+            u.groups.some((g) => g.toLowerCase().includes(query)),
+        );
+        renderUsersTable(filtered);
+      }
+
+      /* --- GESTION HISTORIQUE (LOGS) --- */
+      function openHistoryModal(userId) {
+        const user = usersList.find((u) => u.id === userId);
+        if (!user) return;
+
+        document.getElementById("historyModalTitle").innerText =
+          `Historique : ${user.name}`;
+        document.getElementById("historyModalSub").innerText =
+          `Activités récentes enregistrées pour ${user.email}`;
+
+        const container = document.getElementById("historyTimeline");
+        container.innerHTML = "";
+
+        if (!user.history || user.history.length === 0) {
+          container.innerHTML = `<div class="p-8 text-center text-slate-400 font-bold text-xs">Aucune action enregistrée pour cet utilisateur.</div>`;
+          document.getElementById("historyCount").innerText = "0 événement(s)";
+        } else {
+          document.getElementById("historyCount").innerText =
+            `${user.history.length} événement(s) enregistré(s)`;
+
+          user.history.forEach((item) => {
+            const div = document.createElement("div");
+            div.className =
+              "bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 flex items-start gap-3";
+            div.innerHTML = `
+              <div class="w-8 h-8 rounded-xl bg-indigo-500/10 text-indigo-500 font-bold flex items-center justify-center shrink-0 mt-0.5">
+                <i class="fas fa-terminal text-xs"></i>
+              </div>
+              <div class="flex-1">
+                <div class="flex justify-between items-center">
+                  <span class="font-black text-xs text-slate-800 dark:text-slate-100">${item.action}</span>
+                  <span class="text-[10px] font-bold text-slate-400">${item.timestamp}</span>
+                </div>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">${item.details}</p>
+                <div class="text-[9px] font-bold text-slate-400 mt-1 flex items-center gap-1">
+                  <i class="fas fa-network-wired"></i> IP: ${item.ip}
+                </div>
+              </div>
+            `;
+            container.appendChild(div);
+          });
+        }
+
+        document.getElementById("historyModal").classList.remove("hidden");
+      }
+
+      function closeHistoryModal() {
+        document.getElementById("historyModal").classList.add("hidden");
+      }
+
+      /* --- MODALE ÉDITION UTILISATEUR --- */
+      function toggleAccountTypeFields() {
+        const type = document.getElementById("userType").value;
+        const pwdSection = document.getElementById("passwordSection");
+        const adNotice = document.getElementById("adNoticeSection");
+
+        if (type === "Local") {
+          pwdSection.classList.remove("hidden");
+          adNotice.classList.add("hidden");
+        } else {
+          pwdSection.classList.add("hidden");
+          adNotice.classList.remove("hidden");
+        }
+      }
+
+      function openUserModal(user = null) {
+        const modal = document.getElementById("userModal");
+        const modalTitle = document.getElementById("modalTitle");
+        const pwdNotice = document.getElementById("pwdNotice");
+
+        document
+          .querySelectorAll(".user-group-cb")
+          .forEach((cb) => (cb.checked = false));
+        document
+          .querySelectorAll(".user-perm-cb")
+          .forEach((cb) => (cb.checked = false));
+
+        if (user) {
+          modalTitle.innerText = `Modifier : ${user.name}`;
+          document.getElementById("userId").value = user.id;
+          document.getElementById("userName").value = user.name;
+          document.getElementById("userEmail").value = user.email;
+          document.getElementById("userType").value = user.type;
+          document.getElementById("userRole").value = user.role;
+          document.getElementById("userAccountState").value = user.isSuspended
+            ? "suspended"
+            : "active";
+          document.getElementById("userPassword").value = "";
+          pwdNotice.innerText =
+            "Laisser vide pour conserver le mot de passe actuel";
+
+          user.groups.forEach((g) => {
+            const cb = document.querySelector(`.user-group-cb[value="${g}"]`);
+            if (cb) cb.checked = true;
+          });
+
+          user.permissions.forEach((p) => {
+            const cb = document.querySelector(`.user-perm-cb[value="${p}"]`);
+            if (cb) cb.checked = true;
+          });
+        } else {
+          modalTitle.innerText = "Nouvel Utilisateur";
+          document.getElementById("userId").value = "";
+          document.getElementById("userForm").reset();
+          pwdNotice.innerText = "Obligatoire pour un nouveau compte local";
+        }
+
+        toggleAccountTypeFields();
+        modal.classList.remove("hidden");
+      }
+
+      function closeUserModal() {
+        document.getElementById("userModal").classList.add("hidden");
+      }
+
+      function editUser(id) {
+        const user = usersList.find((u) => u.id === id);
+        if (user) openUserModal(user);
+      }
+
+      function deleteUser(id) {
+        const user = usersList.find((u) => u.id === id);
+        if (!user) return;
+
+        if (
+          confirm(
+            `Êtes-vous certain de vouloir supprimer le compte de ${user.name} ?`,
+          )
+        ) {
+          usersList = usersList.filter((u) => u.id !== id);
+          renderUsersTable();
+          showToast(`Utilisateur ${user.name} supprimé`, "error");
+        }
+      }
+
+      function handleSaveUser(e) {
+        e.preventDefault();
+        const id = document.getElementById("userId").value;
+        const name = document.getElementById("userName").value;
+        const email = document.getElementById("userEmail").value;
+        const type = document.getElementById("userType").value;
+        const role = document.getElementById("userRole").value;
+        const isSuspended =
+          document.getElementById("userAccountState").value === "suspended";
+        const password = document.getElementById("userPassword").value;
+
+        const selectedGroups = Array.from(
+          document.querySelectorAll(".user-group-cb:checked"),
+        ).map((cb) => cb.value);
+        const selectedPerms = Array.from(
+          document.querySelectorAll(".user-perm-cb:checked"),
+        ).map((cb) => cb.value);
+        const initials =
+          name
+            .split(" ")
+            .map((n) => n[0])
+            .join("")
+            .substring(0, 2)
+            .toUpperCase() || "US";
+
+        const nowStr = new Date().toLocaleString("fr-FR", {
+          dateStyle: "short",
+          timeStyle: "short",
+        });
+
+        if (id) {
+          const idx = usersList.findIndex((u) => u.id == id);
+          if (idx !== -1) {
+            // Ajouter un log d'audit pour l'édition
+            usersList[idx].history.unshift({
+              id: Date.now(),
+              timestamp: nowStr,
+              action: "Mise à jour du compte",
+              ip: "192.168.1.50",
+              details: `Informations du profil modifiées par Admin`,
+            });
+
+            usersList[idx] = {
+              ...usersList[idx],
+              name,
+              email,
+              type,
+              role,
+              isSuspended,
+              initials,
+              groups: selectedGroups,
+              permissions: selectedPerms,
+            };
+
+            showToast("Compte mis à jour avec succès", "success");
+          }
+        } else {
+          if (type === "Local" && !password) {
+            alert(
+              "Un mot de passe est obligatoire pour créer un compte local.",
+            );
+            return;
+          }
+
+          const newObj = {
+            id: Date.now(),
+            initials,
+            name,
+            email,
+            type,
+            role,
+            groups: selectedGroups,
+            permissions: selectedPerms,
+            isConnected: false,
+            isSuspended,
+            history: [
+              {
+                id: Date.now(),
+                timestamp: nowStr,
+                action: "Création du compte",
+                ip: "192.168.1.50",
+                details: "Compte initialisé dans le système WAKEJS",
+              },
+            ],
+          };
+          usersList.push(newObj);
+          showToast("Nouveau compte utilisateur créé", "success");
+        }
+
+        closeUserModal();
+        renderUsersTable();
+      }
+
+      function toggleDarkMode() {
+        const root = document.getElementById("html-root");
+        const icon = document.getElementById("themeIcon");
+        root.classList.toggle("dark");
+        icon.className = root.classList.contains("dark")
+          ? "fas fa-sun"
+          : "fas fa-moon";
+      }
+
+      function switchView(viewKey) {
+        document.querySelectorAll(".nav-btn").forEach((btn) => {
+          btn.classList.remove(
+            "border-blue-500",
+            "bg-blue-500/10",
+            "text-blue-600",
+            "dark:text-blue-400",
+          );
+          btn.classList.add(
+            "border-transparent",
+            "bg-slate-50",
+            "dark:bg-slate-800/50",
+            "text-slate-700",
+            "dark:text-slate-300",
+          );
+        });
+
+        const activeNavBtn = document.getElementById(`nav-${viewKey}`);
+        if (activeNavBtn) {
+          activeNavBtn.classList.remove(
+            "border-transparent",
+            "bg-slate-50",
+            "dark:bg-slate-800/50",
+            "text-slate-700",
+            "dark:text-slate-300",
+          );
+          activeNavBtn.classList.add(
+            "border-blue-500",
+            "bg-blue-500/10",
+            "text-blue-600",
+            "dark:text-blue-400",
+          );
+        }
+
+        document
+          .querySelectorAll(".view-panel")
+          .forEach((panel) => panel.classList.add("hidden"));
+        const targetView = document.getElementById(`view-${viewKey}`);
+        if (targetView) targetView.classList.remove("hidden");
+      }
+
+      function showToast(msg, type = "info") {
+        const container = document.getElementById("toast-container");
+        const toast = document.createElement("div");
+
+        let bgClass = "bg-slate-800 text-white";
+        let icon = "fa-info-circle";
+
+        if (type === "success") {
+          bgClass = "bg-green-600 text-white";
+          icon = "fa-check-circle";
+        } else if (type === "error") {
+          bgClass = "bg-red-600 text-white";
+          icon = "fa-exclamation-circle";
+        }
+
+        toast.className = `pointer-events-auto flex items-center gap-2 px-4 py-3 rounded-xl shadow-xl text-xs font-bold transition-all duration-300 transform translate-y-2 opacity-0 ${bgClass}`;
+        toast.innerHTML = `<i class="fas ${icon}"></i><span>${msg}</span>`;
+
+        container.appendChild(toast);
+
+        setTimeout(
+          () => toast.classList.remove("translate-y-2", "opacity-0"),
+          10,
+        );
+        setTimeout(() => {
+          toast.classList.add("opacity-0", "translate-y-2");
+          setTimeout(() => toast.remove(), 300);
+        }, 3000);
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        renderUsersTable();
+      });
+    </script>
+  </body>
+</html>

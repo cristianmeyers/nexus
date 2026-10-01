@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="fr" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WAKEJS | Frame Reference</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = { darkMode: "class" };
+    </script>
+    <!-- FontAwesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body
+    class="bg-gray-100 dark:bg-slate-950 min-h-screen font-sans text-gray-800 dark:text-gray-100 p-4 md:p-8 flex items-center justify-center transition-colors duration-300"
+  >
+    <!-- Cadre extérieur principal (Wireframe) -->
+    <div
+      class="w-full max-w-7xl h-[90vh] bg-white/50 dark:bg-slate-900/50 backdrop-blur-md rounded-[2.5rem] p-4 border-2 border-slate-300 dark:border-slate-800 shadow-2xl flex flex-col md:flex-row gap-4 overflow-hidden"
+    >
+      <!-- Sidebar Gauche (Boceto Layout) -->
+      <aside
+        class="w-full md:w-80 bg-white dark:bg-slate-900 rounded-3xl p-5 border-2 border-slate-200 dark:border-slate-800 flex flex-col justify-between shrink-0 overflow-y-auto shadow-sm"
+      >
+        <div class="space-y-6">
+          <!-- Box Profil Utilisateur (Pic / Name L. / Bouton Hamburger) -->
+          <div
+            class="bg-gradient-to-r from-blue-50 to-slate-50 dark:from-slate-800 dark:to-slate-800/80 p-3 rounded-2xl border-2 border-blue-200 dark:border-slate-700 flex items-center justify-between shadow-sm"
+          >
+            <div class="flex items-center gap-3">
+              <div
+                class="w-10 h-10 rounded-xl bg-blue-600 text-white font-black flex items-center justify-center text-xs tracking-wider shadow-md shadow-blue-500/20"
+              >
+                Pic
+              </div>
+              <div class="flex flex-col">
+                <span
+                  class="font-bold text-sm tracking-tight text-slate-800 dark:text-slate-100"
+                  >Name L.</span
+                >
+                <span
+                  class="text-[10px] text-blue-500 font-extrabold uppercase tracking-widest"
+                  >Admin</span
+                >
+              </div>
+            </div>
+            <button
+              class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
+            >
+              <i class="fas fa-bars text-base"></i>
+            </button>
+          </div>
+
+          <!-- Section Menu -->
+          <div class="space-y-3">
+            <h3
+              class="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 px-1"
+            >
+              Menu
+            </h3>
+            <nav class="space-y-2">
+              <button
+                onclick="switchView('settings')"
+                id="nav-settings"
+                class="nav-btn active w-full flex items-center gap-3 p-3 rounded-2xl border-2 border-blue-500 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold text-sm transition-all text-left"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs shadow-sm"
+                >
+                  <i class="fas fa-cog"></i>
+                </div>
+                <span>Settings</span>
+              </button>
+
+              <button
+                onclick="switchView('theme')"
+                id="nav-theme"
+                class="nav-btn w-full flex items-center gap-3 p-3 rounded-2xl border-2 border-transparent hover:border-slate-300 dark:hover:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 font-bold text-sm transition-all text-left"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs"
+                >
+                  <i class="fas fa-palette"></i>
+                </div>
+                <span>Theme</span>
+              </button>
+
+              <button
+                onclick="switchView('lorem')"
+                id="nav-lorem"
+                class="nav-btn w-full flex items-center gap-3 p-3 rounded-2xl border-2 border-transparent hover:border-slate-300 dark:hover:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 font-bold text-sm transition-all text-left"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs"
+                >
+                  <i class="fas fa-paragraph"></i>
+                </div>
+                <span>Lorem Ipsum</span>
+              </button>
+            </nav>
+          </div>
+
+          <!-- Section Modules -->
+          <div class="space-y-3">
+            <h3
+              class="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 px-1"
+            >
+              Modules
+            </h3>
+            <nav class="space-y-2">
+              <button
+                onclick="switchView('dashboard')"
+                id="nav-dashboard"
+                class="nav-btn w-full flex items-center gap-3 p-3 rounded-2xl border-2 border-transparent hover:border-slate-300 dark:hover:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 font-bold text-sm transition-all text-left"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs"
+                >
+                  <i class="fas fa-chart-pie"></i>
+                </div>
+                <span>DashBoard</span>
+              </button>
+
+              <button
+                onclick="switchView('wake')"
+                id="nav-wake"
+                class="nav-btn w-full flex items-center gap-3 p-3 rounded-2xl border-2 border-transparent hover:border-slate-300 dark:hover:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 font-bold text-sm transition-all text-left"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs"
+                >
+                  <i class="fas fa-network-wired"></i>
+                </div>
+                <span>Wake On Lan</span>
+              </button>
+
+              <button
+                onclick="switchView('fog')"
+                id="nav-fog"
+                class="nav-btn w-full flex items-center gap-3 p-3 rounded-2xl border-2 border-transparent hover:border-slate-300 dark:hover:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 font-bold text-sm transition-all text-left"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs"
+                >
+                  <i class="fas fa-compact-disc"></i>
+                </div>
+                <span>Fog Image Viewer</span>
+              </button>
+            </nav>
+          </div>
+        </div>
+
+        <!-- Footer Sidebar avec Logo & Switch Thème -->
+        <div
+          class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-6 flex items-center justify-between"
+        >
+          <div>
+            <h1 class="text-xl font-black italic tracking-tighter">
+              WAKE<span class="text-blue-500">JS</span>
+            </h1>
+            <p
+              class="text-[9px] uppercase tracking-[0.2em] font-bold text-gray-400"
+            >
+              Control Center
+            </p>
+          </div>
+          <button
+            onclick="toggleDarkMode()"
+            class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-blue-500 transition-colors"
+          >
+            <i id="themeIcon" class="fas fa-moon"></i>
+          </button>
+        </div>
+      </aside>
+
+      <!-- Zone d'affichage Principale Droite -->
+      <main
+        class="flex-1 bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-8 border-2 border-slate-200 dark:border-slate-800 flex flex-col overflow-y-auto relative"
+      >
+        <!-- Top Bar d'Actions Style WAKEJS -->
+        <div
+          class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-slate-200 dark:border-slate-800 mb-6"
+        >
+          <div>
+            <h2
+              id="pageTitle"
+              class="text-3xl font-black italic tracking-tight text-slate-900 dark:text-white uppercase"
+            >
+              Settings
+            </h2>
+            <p
+              id="pageSub"
+              class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1"
+            >
+              Configuration générale du système
+            </p>
+          </div>
+
+          <!-- Boutons de Contrôle WAKEJS -->
+          <div class="flex items-center gap-3 w-full sm:w-auto">
+            <button
+              class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-2xl font-bold text-xs transition-all active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
+            >
+              <i class="fas fa-sync-alt"></i><span>PING</span>
+            </button>
+            <button
+              class="flex-1 sm:flex-none bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-2xl font-bold text-xs transition-all active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-green-500/20"
+            >
+              <i class="fas fa-bolt"></i><span>WAKE</span>
+            </button>
+            <button
+              class="flex-1 sm:flex-none bg-red-600 hover:bg-red-700 text-white px-5 py-3 rounded-2xl font-bold text-xs transition-all active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-red-500/20"
+            >
+              <i class="fas fa-power-off"></i><span>OFF</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Contenu dynamique de la référence -->
+        <div
+          id="contentBox"
+          class="flex-1 flex flex-col items-center justify-center text-center p-6 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800"
+        >
+          <div
+            class="w-16 h-16 rounded-2xl bg-blue-500/10 text-blue-500 flex items-center justify-center text-2xl mb-4"
+          >
+            <i id="contentIcon" class="fas fa-cog"></i>
+          </div>
+          <h3
+            id="contentHeading"
+            class="text-xl font-black text-slate-800 dark:text-slate-100 mb-2"
+          >
+            Paramètres du système
+          </h3>
+          <p
+            id="contentText"
+            class="text-sm text-slate-500 dark:text-slate-400 max-w-md"
+          >
+            Modifiez la configuration du serveur WakeJS, gérez les ports API et
+            configurez les autorisations d'accès.
+          </p>
+        </div>
+      </main>
+    </div>
+
+    <!-- JavaScript interactif monolithique -->
+    <script>
+      const views = {
+        settings: {
+          title: "Settings",
+          sub: "Configuration générale du système WAKEJS",
+          icon: "fas fa-cog",
+          heading: "Paramètres de la plateforme",
+          text: "Gérez les paramètres globaux de l'application, les clés d'API et la durée de rétention des logs.",
+        },
+        theme: {
+          title: "Theme",
+          sub: "Personnalisation graphique et apparence",
+          icon: "fas fa-palette",
+          heading: "Gestion de l'apparence",
+          text: "Basculez entre les modes Clair / Sombre et ajustez les couleurs d'accentuation des modules.",
+        },
+        lorem: {
+          title: "Lorem Ipsum",
+          sub: "Zone de test de texte & composants",
+          icon: "fas fa-paragraph",
+          heading: "Exemple de contenu textuel",
+          text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.",
+        },
+        dashboard: {
+          title: "DashBoard",
+          sub: "Statistiques et état du réseau en temps réel",
+          icon: "fas fa-chart-pie",
+          heading: "Vue d'ensemble WakeJS",
+          text: "Visualisez le nombre de machines en ligne, éteintes ou hors réseau par département et par salle.",
+        },
+        wake: {
+          title: "Wake On Lan",
+          sub: "Envoi de Paquets Magiques WOL",
+          icon: "fas fa-network-wired",
+          heading: "Gestionnaire de Réveil Réseau",
+          text: "Sélectionnez des salles ou des machines spécifiques pour envoyer des paquets de réveil WOL simultanément.",
+        },
+        fog: {
+          title: "Fog Image Viewer",
+          sub: "Gestion des images FOG Project",
+          icon: "fas fa-compact-disc",
+          heading: "Visor d'images système",
+          text: "Explorez les images de déploiement FOG configurées et associez-les aux postes de travail.",
+        },
+      };
+
+      function switchView(viewKey) {
+        const data = views[viewKey];
+        if (!data) return;
+
+        document.getElementById("pageTitle").innerText = data.title;
+        document.getElementById("pageSub").innerText = data.sub;
+        document.getElementById("contentHeading").innerText = data.heading;
+        document.getElementById("contentText").innerText = data.text;
+        document.getElementById("contentIcon").className = data.icon;
+
+        document.querySelectorAll(".nav-btn").forEach((btn) => {
+          btn.className =
+            "nav-btn w-full flex items-center gap-3 p-3 rounded-2xl border-2 border-transparent hover:border-slate-300 dark:hover:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 font-bold text-sm transition-all text-left";
+          const iconBox = btn.querySelector("div");
+          if (iconBox) {
+            iconBox.className =
+              "w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs";
+          }
+        });
+
+        const activeBtn = document.getElementById(`nav-${viewKey}`);
+        if (activeBtn) {
+          activeBtn.className =
+            "nav-btn active w-full flex items-center gap-3 p-3 rounded-2xl border-2 border-blue-500 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold text-sm transition-all text-left";
+          const activeIconBox = activeBtn.querySelector("div");
+          if (activeIconBox) {
+            activeIconBox.className =
+              "w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs shadow-sm";
+          }
+        }
+      }
+
+      function toggleDarkMode() {
+        const html = document.documentElement;
+        const icon = document.getElementById("themeIcon");
+        if (html.classList.contains("dark")) {
+          html.classList.remove("dark");
+          icon.className = "fas fa-sun text-amber-500";
+        } else {
+          html.classList.add("dark");
+          icon.className = "fas fa-moon";
+        }
+      }
+    </script>
+  </body>
+</html>

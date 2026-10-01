@@ -1,0 +1,13 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      args:
+        APP_VERSION: ${APP_TAG}
+  frontend:
+    build: ./frontend
+  updater:
+    build:
+      context: ./updater
+      args:
+        APP_VERSION: ${APP_TAG}

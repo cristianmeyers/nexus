@@ -1,0 +1,57 @@
+name: monapp   # fixe le nom du projet et du réseau (monapp_default)
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: monapp
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: monapp
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U monapp -d monapp"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    image: ghcr.io/cristianmeyers/monapp-backend:${APP_TAG}
+    restart: unless-stopped
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: monapp
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: monapp
+      DATA_DIR: /data
+      RESTART_AFTER_SETUP: "true"
+    volumes:
+      - appdata:/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    image: ghcr.io/cristianmeyers/monapp-frontend:${APP_TAG}
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+  updater:
+    image: ghcr.io/cristianmeyers/monapp-updater:${APP_TAG}
+    restart: unless-stopped
+    environment:
+      UPDATER_TOKEN: ${UPDATER_TOKEN}
+      PROJECT_DIR: ${PROJECT_DIR}
+      NETWORK: monapp_default
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${PROJECT_DIR}:${PROJECT_DIR}   # même chemin que sur l'hôte (obligatoire)
+
+volumes:
+  pgdata:
+  appdata:

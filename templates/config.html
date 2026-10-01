@@ -1,0 +1,1054 @@
+<!doctype html>
+<html lang="fr" class="dark" id="html-root">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WAKEJS | Control Center</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = { darkMode: "class" };
+    </script>
+    <!-- FontAwesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body
+    class="bg-gray-100 dark:bg-slate-950 min-h-screen font-sans text-gray-800 dark:text-gray-100 p-4 md:p-8 flex items-center justify-center transition-colors duration-300"
+  >
+    <!-- Cadre extérieur principal -->
+    <div
+      class="w-full max-w-7xl h-[90vh] bg-white/50 dark:bg-slate-900/50 backdrop-blur-md rounded-[2.5rem] p-4 border-2 border-slate-300 dark:border-slate-800 shadow-2xl flex flex-col md:flex-row gap-4 overflow-hidden"
+    >
+      <!-- Sidebar Gauche -->
+      <aside
+        class="w-full md:w-80 bg-white dark:bg-slate-900 rounded-3xl p-5 border-2 border-slate-200 dark:border-slate-800 flex flex-col justify-between shrink-0 overflow-y-auto shadow-sm"
+      >
+        <div class="space-y-6">
+          <!-- Profil Utilisateur -->
+          <div
+            class="bg-gradient-to-r from-blue-50 to-slate-50 dark:from-slate-800 dark:to-slate-800/80 p-3 rounded-2xl border-2 border-blue-200 dark:border-slate-700 flex items-center justify-between shadow-sm"
+          >
+            <div class="flex items-center gap-3">
+              <div
+                class="w-10 h-10 rounded-xl bg-blue-600 text-white font-black flex items-center justify-center text-xs tracking-wider shadow-md shadow-blue-500/20"
+              >
+                AD
+              </div>
+              <div class="flex flex-col">
+                <span
+                  class="font-bold text-sm tracking-tight text-slate-800 dark:text-slate-100"
+                  >Admin User</span
+                >
+                <span
+                  class="text-[10px] text-blue-500 font-extrabold uppercase tracking-widest"
+                  >Administrateur</span
+                >
+              </div>
+            </div>
+            <button
+              class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
+            >
+              <i class="fas fa-bars text-base"></i>
+            </button>
+          </div>
+
+          <!-- Section Menu -->
+          <div class="space-y-3">
+            <h3
+              class="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 px-1"
+            >
+              Menu
+            </h3>
+            <nav class="space-y-2">
+              <button
+                onclick="switchView('settings')"
+                id="nav-settings"
+                class="nav-btn active w-full flex items-center gap-3 p-3 rounded-2xl border-2 border-blue-500 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold text-sm transition-all text-left"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs shadow-sm"
+                >
+                  <i class="fas fa-cog"></i>
+                </div>
+                <span>Settings</span>
+              </button>
+
+              <button
+                onclick="switchView('theme')"
+                id="nav-theme"
+                class="nav-btn w-full flex items-center gap-3 p-3 rounded-2xl border-2 border-transparent hover:border-slate-300 dark:hover:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 font-bold text-sm transition-all text-left"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs"
+                >
+                  <i class="fas fa-palette"></i>
+                </div>
+                <span>Theme</span>
+              </button>
+
+              <!-- Nouvelle vue Utilisateurs -->
+              <button
+                onclick="switchView('users')"
+                id="nav-users"
+                class="nav-btn w-full flex items-center gap-3 p-3 rounded-2xl border-2 border-transparent hover:border-slate-300 dark:hover:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 font-bold text-sm transition-all text-left"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs"
+                >
+                  <i class="fas fa-users"></i>
+                </div>
+                <span>Utilisateurs</span>
+              </button>
+            </nav>
+          </div>
+
+          <!-- Section Modules -->
+          <div class="space-y-3">
+            <h3
+              class="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 px-1"
+            >
+              Modules
+            </h3>
+            <nav class="space-y-2">
+              <button
+                onclick="switchView('dashboard')"
+                id="nav-dashboard"
+                class="nav-btn w-full flex items-center gap-3 p-3 rounded-2xl border-2 border-transparent hover:border-slate-300 dark:hover:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 font-bold text-sm transition-all text-left"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs"
+                >
+                  <i class="fas fa-chart-pie"></i>
+                </div>
+                <span>DashBoard</span>
+              </button>
+
+              <button
+                onclick="switchView('wake')"
+                id="nav-wake"
+                class="nav-btn w-full flex items-center gap-3 p-3 rounded-2xl border-2 border-transparent hover:border-slate-300 dark:hover:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 font-bold text-sm transition-all text-left"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs"
+                >
+                  <i class="fas fa-network-wired"></i>
+                </div>
+                <span>Wake On Lan</span>
+              </button>
+
+              <button
+                onclick="switchView('fog')"
+                id="nav-fog"
+                class="nav-btn w-full flex items-center gap-3 p-3 rounded-2xl border-2 border-transparent hover:border-slate-300 dark:hover:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 font-bold text-sm transition-all text-left"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs"
+                >
+                  <i class="fas fa-compact-disc"></i>
+                </div>
+                <span>Fog Image Viewer</span>
+              </button>
+            </nav>
+          </div>
+        </div>
+
+        <!-- Footer Sidebar -->
+        <div
+          class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-6 flex items-center justify-between"
+        >
+          <div>
+            <h1
+              class="text-xl font-black italic tracking-tighter text-slate-900 dark:text-white"
+            >
+              WAKE<span class="text-blue-500">JS</span>
+            </h1>
+            <p
+              class="text-[9px] uppercase tracking-[0.2em] font-bold text-gray-400"
+            >
+              Control Center
+            </p>
+          </div>
+          <button
+            onclick="toggleDarkMode()"
+            title="Basculer le thème"
+            class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-blue-500 transition-colors"
+          >
+            <i id="themeIcon" class="fas fa-moon"></i>
+          </button>
+        </div>
+      </aside>
+
+      <!-- Zone d'affichage Principale -->
+      <main
+        class="flex-1 bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-8 border-2 border-slate-200 dark:border-slate-800 flex flex-col overflow-y-auto relative"
+      >
+        <!-- Top Bar d'Actions -->
+        <div
+          class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-slate-200 dark:border-slate-800 mb-6 shrink-0"
+        >
+          <div>
+            <h2
+              id="pageTitle"
+              class="text-3xl font-black italic tracking-tight text-slate-900 dark:text-white uppercase"
+            >
+              Settings
+            </h2>
+            <p
+              id="pageSub"
+              class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1"
+            >
+              Configuration générale du système WAKEJS
+            </p>
+          </div>
+
+          <!-- Actions spécifiques WOL -->
+          <div
+            id="wolActions"
+            class="hidden items-center gap-3 w-full sm:w-auto"
+          >
+            <button
+              onclick="showToast('Diagnostic réseau (PING) démarré...', 'info')"
+              class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-2xl font-bold text-xs transition-all active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
+            >
+              <i class="fas fa-sync-alt"></i><span>PING</span>
+            </button>
+            <button
+              onclick="
+                showToast('Signal WOL transmis sur le réseau !', 'success')
+              "
+              class="flex-1 sm:flex-none bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-2xl font-bold text-xs transition-all active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-green-500/20"
+            >
+              <i class="fas fa-bolt"></i><span>WAKE</span>
+            </button>
+            <button
+              onclick="showToast('Ordre d\'extinction émis.', 'error')"
+              class="flex-1 sm:flex-none bg-red-600 hover:bg-red-700 text-white px-5 py-3 rounded-2xl font-bold text-xs transition-all active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-red-500/20"
+            >
+              <i class="fas fa-power-off"></i><span>OFF</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Contenu dynamique -->
+        <div id="contentBox" class="flex-1 space-y-6">
+          <!-- En-tête Settings par défaut -->
+          <div
+            class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-slate-50 dark:bg-slate-800/40 p-4 rounded-2xl border border-slate-200 dark:border-slate-800"
+          >
+            <div class="flex items-center gap-3">
+              <div
+                class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center text-sm shadow-md"
+              >
+                <i class="fas fa-sliders"></i>
+              </div>
+              <div>
+                <h3
+                  class="font-black text-sm text-slate-800 dark:text-slate-100"
+                >
+                  Panneau de Configuration Monolithique
+                </h3>
+                <p class="text-xs text-slate-400">
+                  Gérez la sécurité, le réseau, les accès et les mises à jour
+                </p>
+              </div>
+            </div>
+
+            <button
+              onclick="saveSettings()"
+              id="btnSaveSettings"
+              class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider shadow-md transition-all flex items-center justify-center gap-2 active:scale-95"
+            >
+              <i class="fas fa-save"></i><span>Sauvegarder</span>
+            </button>
+          </div>
+
+          <!-- Onglets Settings -->
+          <div
+            class="flex gap-2 border-b border-slate-200 dark:border-slate-800 pb-3 overflow-x-auto"
+          >
+            <button
+              onclick="switchSettingsTab('updates')"
+              id="stab-updates"
+              class="stab-btn bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap shadow-sm"
+            >
+              <i class="fas fa-arrows-rotate"></i><span>Mises à jour</span>
+              <span
+                class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"
+              ></span>
+            </button>
+
+            <button
+              onclick="switchSettingsTab('auth')"
+              id="stab-auth"
+              class="stab-btn bg-slate-100 dark:bg-slate-800/60 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap"
+            >
+              <i class="fas fa-shield-halved"></i
+              ><span>Authentification & Sécurité</span>
+            </button>
+
+            <button
+              onclick="switchSettingsTab('network')"
+              id="stab-network"
+              class="stab-btn bg-slate-100 dark:bg-slate-800/60 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap"
+            >
+              <i class="fas fa-network-wired"></i><span>Réseau & WOL</span>
+            </button>
+
+            <button
+              onclick="switchSettingsTab('system')"
+              id="stab-system"
+              class="stab-btn bg-slate-100 dark:bg-slate-800/60 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap"
+            >
+              <i class="fas fa-sliders"></i><span>Maintenance & Logs</span>
+            </button>
+          </div>
+
+          <!-- ONGLET 1 : MISES À JOUR -->
+          <div id="settings-updates" class="settings-panel space-y-4">
+            <div
+              class="bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4"
+            >
+              <div
+                class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800"
+              >
+                <div class="flex items-center gap-3">
+                  <div
+                    class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center text-lg font-black"
+                  >
+                    <i class="fas fa-cube"></i>
+                  </div>
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <h4
+                        class="font-black text-base text-slate-800 dark:text-slate-100"
+                      >
+                        WAKEJS Core
+                      </h4>
+                      <span
+                        class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase bg-blue-500/10 text-blue-500 border border-blue-500/20"
+                        >v1.4.2</span
+                      >
+                    </div>
+                    <p class="text-xs text-slate-400">
+                      Moteur principal d'envoi de paquets & daemon
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onclick="checkUpdateSim()"
+                  id="btnCheckUpdate"
+                  class="bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 px-4 py-2.5 rounded-xl font-bold text-xs transition-all flex items-center gap-2 active:scale-95"
+                >
+                  <i id="updateSpin" class="fas fa-arrows-rotate"></i>
+                  <span>Vérifier les mises à jour</span>
+                </button>
+              </div>
+
+              <div
+                id="updateBanner"
+                class="bg-amber-500/10 border-2 border-amber-500/30 rounded-2xl p-4 space-y-3"
+              >
+                <div
+                  class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
+                >
+                  <div class="flex items-center gap-3">
+                    <i
+                      class="fas fa-circle-exclamation text-amber-500 text-lg"
+                    ></i>
+                    <div>
+                      <h5
+                        class="font-black text-xs text-slate-900 dark:text-white"
+                      >
+                        Mise à jour v1.5.0 disponible
+                      </h5>
+                      <p class="text-[11px] text-slate-400">
+                        Amélioration du scanner IP & correction du mode sombre
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    onclick="launchUpdateSim()"
+                    id="btnInstallUpdate"
+                    class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black px-4 py-2 rounded-xl text-xs uppercase tracking-wider shadow-sm transition-all active:scale-95"
+                  >
+                    Mettre à jour
+                  </button>
+                </div>
+
+                <div id="updateProgressBox" class="hidden space-y-1 pt-2">
+                  <div
+                    class="flex justify-between text-[11px] font-bold text-slate-400"
+                  >
+                    <span>Installation en cours...</span>
+                    <span id="updatePercent">0%</span>
+                  </div>
+                  <div
+                    class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden"
+                  >
+                    <div
+                      id="updateProgressBar"
+                      class="h-full bg-amber-500 w-0 transition-all duration-300"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div
+                  class="p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl space-y-1"
+                >
+                  <label
+                    class="block text-[10px] font-black uppercase text-slate-400"
+                    >Canal de version</label
+                  >
+                  <select
+                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs font-bold text-slate-800 dark:text-slate-100 outline-none"
+                  >
+                    <option value="stable">Canal Stable (Recommandé)</option>
+                    <option value="beta">Canal Bêta</option>
+                    <option value="nightly">Canal Nightly (Dev)</option>
+                  </select>
+                </div>
+
+                <div
+                  class="p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl flex items-center justify-between"
+                >
+                  <div>
+                    <span
+                      class="block text-xs font-bold text-slate-800 dark:text-slate-100"
+                      >Vérification automatique</span
+                    >
+                    <span class="text-[10px] text-slate-400"
+                      >Rechercher les majs en arrière-plan</span
+                    >
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked
+                    class="w-4 h-4 accent-blue-600 cursor-pointer"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ONGLET 2 : AUTHENTIFICATION -->
+          <div id="settings-auth" class="settings-panel hidden space-y-4">
+            <div
+              class="bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4"
+            >
+              <div>
+                <h4
+                  class="font-black text-sm text-slate-800 dark:text-slate-100"
+                >
+                  Méthode d'Authentification
+                </h4>
+                <p class="text-xs text-slate-400">
+                  Choisissez le mode d'accès au panneau d'administration
+                </p>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <label
+                  onclick="setAuthProvider('local')"
+                  id="auth-opt-local"
+                  class="p-3.5 rounded-xl border-2 border-blue-500 bg-blue-500/10 cursor-pointer transition-all flex flex-col gap-1"
+                >
+                  <div class="flex items-center justify-between">
+                    <i class="fas fa-database text-blue-500 text-sm"></i>
+                    <input
+                      type="radio"
+                      name="auth_type"
+                      value="local"
+                      checked
+                      class="accent-blue-600"
+                    />
+                  </div>
+                  <span
+                    class="font-bold text-xs text-slate-800 dark:text-slate-100"
+                    >Base Locale</span
+                  >
+                  <span class="text-[10px] text-slate-400"
+                    >Utilisateurs stockés dans la base SQLite</span
+                  >
+                </label>
+
+                <label
+                  onclick="setAuthProvider('ldap')"
+                  id="auth-opt-ldap"
+                  class="p-3.5 rounded-xl border-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 cursor-pointer transition-all flex flex-col gap-1"
+                >
+                  <div class="flex items-center justify-between">
+                    <i class="fas fa-sitemap text-blue-500 text-sm"></i>
+                    <input
+                      type="radio"
+                      name="auth_type"
+                      value="ldap"
+                      class="accent-blue-600"
+                    />
+                  </div>
+                  <span
+                    class="font-bold text-xs text-slate-800 dark:text-slate-100"
+                    >Active Directory / LDAP</span
+                  >
+                  <span class="text-[10px] text-slate-400"
+                    >Annuaire d'entreprise centralisé</span
+                  >
+                </label>
+
+                <label
+                  onclick="setAuthProvider('oauth2')"
+                  id="auth-opt-oauth2"
+                  class="p-3.5 rounded-xl border-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 cursor-pointer transition-all flex flex-col gap-1"
+                >
+                  <div class="flex items-center justify-between">
+                    <i class="fas fa-key text-blue-500 text-sm"></i>
+                    <input
+                      type="radio"
+                      name="auth_type"
+                      value="oauth2"
+                      class="accent-blue-600"
+                    />
+                  </div>
+                  <span
+                    class="font-bold text-xs text-slate-800 dark:text-slate-100"
+                    >OAuth2 / OpenID</span
+                  >
+                  <span class="text-[10px] text-slate-400"
+                    >Keycloak, Google, Authelia</span
+                  >
+                </label>
+              </div>
+
+              <div
+                id="form-ldap"
+                class="hidden p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3"
+              >
+                <h5 class="font-black text-xs uppercase text-blue-500">
+                  Paramètres LDAP
+                </h5>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <label
+                      class="block text-[10px] font-bold text-slate-400 mb-1"
+                      >Serveur LDAP</label
+                    >
+                    <input
+                      type="text"
+                      value="ldap://192.168.1.10:389"
+                      class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs font-bold"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      class="block text-[10px] font-bold text-slate-400 mb-1"
+                      >Base DN</label
+                    >
+                    <input
+                      type="text"
+                      value="dc=entreprise,dc=local"
+                      class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs font-bold"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div
+                id="form-oauth2"
+                class="hidden p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3"
+              >
+                <h5 class="font-black text-xs uppercase text-blue-500">
+                  Paramètres OpenID Connect
+                </h5>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <label
+                      class="block text-[10px] font-bold text-slate-400 mb-1"
+                      >Client ID</label
+                    >
+                    <input
+                      type="text"
+                      value="wakejs-client"
+                      class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs font-bold"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      class="block text-[10px] font-bold text-slate-400 mb-1"
+                      >Issuer URL</label
+                    >
+                    <input
+                      type="text"
+                      value="https://auth.entreprise.com/realms/wakejs"
+                      class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs font-bold"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ONGLET 3 : RÉSEAU & WOL -->
+          <div id="settings-network" class="settings-panel hidden space-y-4">
+            <div
+              class="bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4"
+            >
+              <div>
+                <h4
+                  class="font-black text-sm text-slate-800 dark:text-slate-100"
+                >
+                  Configuration Réseau & Paquets Magiques
+                </h4>
+                <p class="text-xs text-slate-400">
+                  Paramètres de sous-réseau et de détection Ping
+                </p>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div
+                  class="p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl space-y-1"
+                >
+                  <label
+                    class="block text-[10px] font-black uppercase text-slate-400"
+                    >Adresse Broadcast</label
+                  >
+                  <input
+                    type="text"
+                    value="192.168.1.255"
+                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs font-bold"
+                  />
+                </div>
+
+                <div
+                  class="p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl space-y-1"
+                >
+                  <label
+                    class="block text-[10px] font-black uppercase text-slate-400"
+                    >Port UDP WOL</label
+                  >
+                  <input
+                    type="number"
+                    value="9"
+                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs font-bold"
+                  />
+                </div>
+
+                <div
+                  class="p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl space-y-1"
+                >
+                  <label
+                    class="block text-[10px] font-black uppercase text-slate-400"
+                    >Intervalle de Ping Auto (sec)</label
+                  >
+                  <input
+                    type="number"
+                    value="30"
+                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs font-bold"
+                  />
+                </div>
+
+                <div
+                  class="p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl space-y-1"
+                >
+                  <label
+                    class="block text-[10px] font-black uppercase text-slate-400"
+                    >Timeout Ping (ms)</label
+                  >
+                  <input
+                    type="number"
+                    value="2000"
+                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs font-bold"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ONGLET 4 : MAINTENANCE & LOGS -->
+          <div id="settings-system" class="settings-panel hidden space-y-4">
+            <div
+              class="bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4"
+            >
+              <div>
+                <h4
+                  class="font-black text-sm text-slate-800 dark:text-slate-100"
+                >
+                  Maintenance & Rétention des Journaux
+                </h4>
+                <p class="text-xs text-slate-400">
+                  Niveau de détails des logs système
+                </p>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div
+                  class="p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl space-y-1"
+                >
+                  <label
+                    class="block text-[10px] font-black uppercase text-slate-400"
+                    >Niveau de Log</label
+                  >
+                  <select
+                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs font-bold text-slate-800 dark:text-slate-100 outline-none"
+                  >
+                    <option value="debug">Débogage (Debug)</option>
+                    <option value="info" selected>Information (Info)</option>
+                    <option value="warn">Avertissements (Warn)</option>
+                    <option value="error">Erreurs Uniquement (Error)</option>
+                  </select>
+                </div>
+
+                <div
+                  class="p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl space-y-1"
+                >
+                  <label
+                    class="block text-[10px] font-black uppercase text-slate-400"
+                    >Rétention des logs (jours)</label
+                  >
+                  <input
+                    type="number"
+                    value="30"
+                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs font-bold"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Notification Toast -->
+    <div
+      id="toast"
+      class="fixed top-6 right-6 z-50 px-5 py-3 rounded-2xl shadow-2xl border font-bold text-xs flex items-center gap-3 transition-all duration-300 transform translate-y-[-100px] opacity-0 pointer-events-none"
+    >
+      <i id="toastIcon" class="fas fa-check-circle text-base"></i>
+      <span id="toastMsg">Notification</span>
+    </div>
+
+    <!-- JavaScript interactif -->
+    <script>
+      const views = {
+        settings: {
+          title: "Settings",
+          sub: "Configuration générale du système WAKEJS",
+        },
+        theme: {
+          title: "Theme",
+          sub: "Personnalisation graphique et apparence",
+          icon: "fas fa-palette",
+          heading: "Gestion de l'apparence",
+          text: "Basculez entre les modes Clair / Sombre et ajustez les couleurs d'accentuation des modules.",
+        },
+        users: {
+          title: "Utilisateurs",
+          sub: "Gestion des accès et rôles des opérateurs",
+          icon: "fas fa-users",
+        },
+        dashboard: {
+          title: "DashBoard",
+          sub: "Statistiques et état du réseau en temps réel",
+          icon: "fas fa-chart-pie",
+          heading: "Vue d'ensemble WakeJS",
+          text: "Visualisez le nombre de machines en ligne, éteintes ou hors réseau par département et par salle.",
+        },
+        wake: {
+          title: "Wake On Lan",
+          sub: "Envoi de Paquets Magiques WOL",
+          icon: "fas fa-network-wired",
+          heading: "Gestionnaire de Réveil Réseau",
+          text: "Sélectionnez des salles ou des machines spécifiques pour envoyer des paquets de réveil WOL simultanément.",
+        },
+        fog: {
+          title: "Fog Image Viewer",
+          sub: "Gestion des images FOG Project",
+          icon: "fas fa-compact-disc",
+          heading: "Visor d'images système",
+          text: "Explorez les images de déploiement FOG configurées et associez-les aux postes de travail.",
+        },
+      };
+
+      let settingsHtmlCache = null;
+
+      window.addEventListener("DOMContentLoaded", () => {
+        settingsHtmlCache = document.getElementById("contentBox").innerHTML;
+      });
+
+      function switchView(viewKey) {
+        const data = views[viewKey];
+        if (!data) return;
+
+        document.getElementById("pageTitle").innerText = data.title;
+        document.getElementById("pageSub").innerText = data.sub;
+
+        // Contrôle de l'affichage des actions rapides WOL
+        const wolActions = document.getElementById("wolActions");
+        if (wolActions) {
+          if (viewKey === "wake") {
+            wolActions.classList.remove("hidden");
+            wolActions.classList.add("flex");
+          } else {
+            wolActions.classList.add("hidden");
+            wolActions.classList.remove("flex");
+          }
+        }
+
+        // Mise à jour visuelle des boutons de menu
+        document.querySelectorAll(".nav-btn").forEach((btn) => {
+          btn.className =
+            "nav-btn w-full flex items-center gap-3 p-3 rounded-2xl border-2 border-transparent hover:border-slate-300 dark:hover:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 font-bold text-sm transition-all text-left";
+          const iconBox = btn.querySelector("div");
+          if (iconBox) {
+            iconBox.className =
+              "w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs";
+          }
+        });
+
+        const activeBtn = document.getElementById(`nav-${viewKey}`);
+        if (activeBtn) {
+          activeBtn.className =
+            "nav-btn active w-full flex items-center gap-3 p-3 rounded-2xl border-2 border-blue-500 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold text-sm transition-all text-left";
+          const activeIconBox = activeBtn.querySelector("div");
+          if (activeIconBox) {
+            activeIconBox.className =
+              "w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs shadow-sm";
+          }
+        }
+
+        // Injection du contenu
+        const contentBox = document.getElementById("contentBox");
+
+        if (viewKey === "settings") {
+          contentBox.innerHTML = settingsHtmlCache;
+        } else if (viewKey === "users") {
+          // VUE GESTION DES UTILISATEURS
+          contentBox.innerHTML = `
+            <div class="space-y-4">
+              <!-- Barre de recherche & Bouton Ajouter -->
+              <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50 dark:bg-slate-800/40 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+                <div class="relative w-full sm:w-72">
+                  <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                  <input type="text" placeholder="Rechercher un utilisateur..." class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl pl-9 pr-3 py-2 text-xs font-bold text-slate-800 dark:text-slate-100 outline-none focus:border-blue-500" />
+                </div>
+                <button onclick="showToast('Ouverture du formulaire d\'ajout...', 'info')" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all flex items-center justify-center gap-2 active:scale-95">
+                  <i class="fas fa-user-plus"></i><span>Ajouter un utilisateur</span>
+                </button>
+              </div>
+
+              <!-- Tableau des Utilisateurs -->
+              <div class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800">
+                <table class="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr class="bg-slate-100 dark:bg-slate-800/80 text-slate-400 font-black uppercase text-[10px] tracking-wider">
+                      <th class="p-4">Utilisateur</th>
+                      <th class="p-4">Rôle</th>
+                      <th class="p-4">Statut</th>
+                      <th class="p-4">Dernier accès</th>
+                      <th class="p-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-200 dark:divide-slate-800 bg-white dark:bg-slate-900 font-bold text-slate-700 dark:text-slate-200">
+                    <!-- User 1 -->
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+                      <td class="p-4 flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-black text-xs">AD</div>
+                        <div>
+                          <div class="text-slate-900 dark:text-white font-bold">Admin User</div>
+                          <div class="text-[10px] text-slate-400 font-normal">admin@wakejs.local</div>
+                        </div>
+                      </td>
+                      <td class="p-4"><span class="px-2 py-1 rounded-md text-[10px] bg-blue-500/10 text-blue-500 border border-blue-500/20 uppercase font-black">Administrateur</span></td>
+                      <td class="p-4"><span class="inline-flex items-center gap-1.5 text-emerald-500"><span class="w-2 h-2 rounded-full bg-emerald-500"></span>Actif</span></td>
+                      <td class="p-4 text-slate-400 font-normal">Aujourd'hui, 11:42</td>
+                      <td class="p-4 text-right space-x-1">
+                        <button onclick="showToast('Édition de l\'utilisateur Admin User', 'info')" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:text-blue-500 transition-colors"><i class="fas fa-pen"></i></button>
+                        <button onclick="showToast('Impossible d\'effacer l\'admin principal', 'error')" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:text-red-500 transition-colors"><i class="fas fa-trash"></i></button>
+                      </td>
+                    </tr>
+                    <!-- User 2 -->
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+                      <td class="p-4 flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-black text-xs">JD</div>
+                        <div>
+                          <div class="text-slate-900 dark:text-white font-bold">John Doe</div>
+                          <div class="text-[10px] text-slate-400 font-normal">j.doe@wakejs.local</div>
+                        </div>
+                      </td>
+                      <td class="p-4"><span class="px-2 py-1 rounded-md text-[10px] bg-slate-500/10 text-slate-400 border border-slate-500/20 uppercase font-black">Opérateur</span></td>
+                      <td class="p-4"><span class="inline-flex items-center gap-1.5 text-emerald-500"><span class="w-2 h-2 rounded-full bg-emerald-500"></span>Actif</span></td>
+                      <td class="p-4 text-slate-400 font-normal">Hier, 16:15</td>
+                      <td class="p-4 text-right space-x-1">
+                        <button onclick="showToast('Édition de John Doe', 'info')" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:text-blue-500 transition-colors"><i class="fas fa-pen"></i></button>
+                        <button onclick="showToast('John Doe supprimé', 'error')" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:text-red-500 transition-colors"><i class="fas fa-trash"></i></button>
+                      </td>
+                    </tr>
+                    <!-- User 3 -->
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+                      <td class="p-4 flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-amber-600 text-white flex items-center justify-center font-black text-xs">MS</div>
+                        <div>
+                          <div class="text-slate-900 dark:text-white font-bold">Marie Smith</div>
+                          <div class="text-[10px] text-slate-400 font-normal">m.smith@wakejs.local</div>
+                        </div>
+                      </td>
+                      <td class="p-4"><span class="px-2 py-1 rounded-md text-[10px] bg-slate-500/10 text-slate-400 border border-slate-500/20 uppercase font-black">Enseignant</span></td>
+                      <td class="p-4"><span class="inline-flex items-center gap-1.5 text-slate-400"><span class="w-2 h-2 rounded-full bg-slate-400"></span>Inactif</span></td>
+                      <td class="p-4 text-slate-400 font-normal">Il y a 12 jours</td>
+                      <td class="p-4 text-right space-x-1">
+                        <button onclick="showToast('Édition de Marie Smith', 'info')" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:text-blue-500 transition-colors"><i class="fas fa-pen"></i></button>
+                        <button onclick="showToast('Marie Smith supprimée', 'error')" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:text-red-500 transition-colors"><i class="fas fa-trash"></i></button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          `;
+        } else {
+          contentBox.innerHTML = `
+            <div class="flex-1 flex flex-col items-center justify-center text-center p-8 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800 my-auto">
+              <div class="w-16 h-16 rounded-2xl bg-blue-500/10 text-blue-500 flex items-center justify-center text-2xl mb-4">
+                <i class="${data.icon}"></i>
+              </div>
+              <h3 class="text-xl font-black text-slate-800 dark:text-slate-100 mb-2">${data.heading}</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 max-w-md">${data.text}</p>
+            </div>
+          `;
+        }
+      }
+
+      function switchSettingsTab(tabKey) {
+        document
+          .querySelectorAll(".settings-panel")
+          .forEach((panel) => panel.classList.add("hidden"));
+        document.querySelectorAll(".stab-btn").forEach((btn) => {
+          btn.className =
+            "stab-btn bg-slate-100 dark:bg-slate-800/60 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap";
+        });
+
+        const activePanel = document.getElementById(`settings-${tabKey}`);
+        if (activePanel) activePanel.classList.remove("hidden");
+
+        const activeTabBtn = document.getElementById(`stab-${tabKey}`);
+        if (activeTabBtn) {
+          activeTabBtn.className =
+            "stab-btn bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap shadow-sm";
+        }
+      }
+
+      function setAuthProvider(provider) {
+        document.getElementById("form-ldap").classList.add("hidden");
+        document.getElementById("form-oauth2").classList.add("hidden");
+
+        ["local", "ldap", "oauth2"].forEach((p) => {
+          const el = document.getElementById(`auth-opt-${p}`);
+          if (el)
+            el.className =
+              "p-3.5 rounded-xl border-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 cursor-pointer transition-all flex flex-col gap-1";
+        });
+
+        const activeEl = document.getElementById(`auth-opt-${provider}`);
+        if (activeEl)
+          activeEl.className =
+            "p-3.5 rounded-xl border-2 border-blue-500 bg-blue-500/10 cursor-pointer transition-all flex flex-col gap-1";
+
+        if (provider === "ldap")
+          document.getElementById("form-ldap").classList.remove("hidden");
+        if (provider === "oauth2")
+          document.getElementById("form-oauth2").classList.remove("hidden");
+      }
+
+      function checkUpdateSim() {
+        const icon = document.getElementById("updateSpin");
+        icon.classList.add("animate-spin");
+        setTimeout(() => {
+          icon.classList.remove("animate-spin");
+          showToast(
+            "Recherche terminée : La version v1.5.0 est prête !",
+            "info",
+          );
+        }, 1200);
+      }
+
+      function launchUpdateSim() {
+        const box = document.getElementById("updateProgressBox");
+        const bar = document.getElementById("updateProgressBar");
+        const percent = document.getElementById("updatePercent");
+        const btn = document.getElementById("btnInstallUpdate");
+
+        box.classList.remove("hidden");
+        btn.disabled = true;
+        btn.classList.add("opacity-50");
+
+        let prog = 0;
+        const interval = setInterval(() => {
+          prog += 20;
+          bar.style.width = prog + "%";
+          percent.innerText = prog + "%";
+
+          if (prog >= 100) {
+            clearInterval(interval);
+            showToast("WAKEJS a été mis à jour en version v1.5.0 !", "success");
+            setTimeout(() => {
+              document.getElementById("updateBanner").classList.add("hidden");
+            }, 1000);
+          }
+        }, 400);
+      }
+
+      function saveSettings() {
+        const btn = document.getElementById("btnSaveSettings");
+        btn.innerHTML = `<i class="fas fa-spinner animate-spin"></i><span>Enregistrement...</span>`;
+        setTimeout(() => {
+          btn.innerHTML = `<i class="fas fa-save"></i><span>Sauvegarder</span>`;
+          showToast("Configuration sauvegardée avec succès !", "success");
+        }, 800);
+      }
+
+      function toggleDarkMode() {
+        const html = document.documentElement;
+        const icon = document.getElementById("themeIcon");
+        if (html.classList.contains("dark")) {
+          html.classList.remove("dark");
+          icon.className = "fas fa-sun text-amber-500";
+        } else {
+          html.classList.add("dark");
+          icon.className = "fas fa-moon";
+        }
+      }
+
+      function showToast(msg, type = "success") {
+        const toast = document.getElementById("toast");
+        const toastMsg = document.getElementById("toastMsg");
+        const toastIcon = document.getElementById("toastIcon");
+
+        toastMsg.innerText = msg;
+
+        if (type === "success") {
+          toast.className =
+            "fixed top-6 right-6 z-50 px-5 py-3 rounded-2xl shadow-2xl border font-bold text-xs flex items-center gap-3 bg-emerald-500 text-white border-emerald-400 transition-all duration-300 transform translate-y-0 opacity-100";
+          toastIcon.className = "fas fa-check-circle text-base";
+        } else if (type === "info") {
+          toast.className =
+            "fixed top-6 right-6 z-50 px-5 py-3 rounded-2xl shadow-2xl border font-bold text-xs flex items-center gap-3 bg-blue-600 text-white border-blue-500 transition-all duration-300 transform translate-y-0 opacity-100";
+          toastIcon.className = "fas fa-info-circle text-base";
+        } else if (type === "error") {
+          toast.className =
+            "fixed top-6 right-6 z-50 px-5 py-3 rounded-2xl shadow-2xl border font-bold text-xs flex items-center gap-3 bg-rose-600 text-white border-rose-500 transition-all duration-300 transform translate-y-0 opacity-100";
+          toastIcon.className = "fas fa-circle-exclamation text-base";
+        }
+
+        setTimeout(() => {
+          toast.className =
+            "fixed top-6 right-6 z-50 px-5 py-3 rounded-2xl shadow-2xl border font-bold text-xs flex items-center gap-3 transition-all duration-300 transform translate-y-[-100px] opacity-0 pointer-events-none";
+        }, 3000);
+      }
+    </script>
+  </body>
+</html>
