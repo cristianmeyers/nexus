@@ -62,7 +62,7 @@ const apiOnline = ref(false);
 // Petit test simple : le backend répond-il ? Sert juste à colorer le badge.
 onMounted(async () => {
   try {
-    const res = await fetch("http://localhost:3000/api/health");
+    const res = await fetch("/api/health");
     apiOnline.value = res.ok;
   } catch {
     apiOnline.value = false;
