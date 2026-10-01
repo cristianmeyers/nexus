@@ -79,11 +79,11 @@ const toastClasses = computed(() => {
 /* La recherche de mises à jour et les paquets de langue restent simulés */
 /* (TODO: routes backend à créer).                                       */
 /* ------------------------------------------------------------------ */
-const appVersion = ref('1.0.0')
+const appVersion = ref('…')
 const isCheckingUpdate = ref(false)
-const updateAvailable = ref(true)
-const latestVersion = ref('1.2.0')
-const updateNote = ref('Amélioration des logs')
+const updateAvailable = ref(false)
+const latestVersion = ref('')
+const updateNote = ref('')
 const versionChannel = ref('stable')
 const autoCheckUpdate = ref(true)
 
@@ -168,13 +168,25 @@ function removeLanguage(code) {
 
 const autoUpdateLanguagePacks = ref(false)
 
-function checkForUpdate() {
+async function checkForUpdate(silent = false) {
   isCheckingUpdate.value = true
-  // TODO: remplacer par un vrai appel API
-  setTimeout(() => {
+  try {
+    const { ok, data } = await apiFetch('/system/update/check')
+    if (!ok) {
+      if (!silent) showToast(data?.message || 'Impossible de vérifier les mises à jour.', 'error')
+      return
+    }
+    appVersion.value = data.current
+    latestVersion.value = data.latest
+    updateAvailable.value = data.updateAvailable
+    if (!silent) {
+      showToast(data.updateAvailable ? `Version ${data.latest} disponible.` : 'Vous êtes à jour.', 'info')
+    }
+  } catch (err) {
+    if (err.message !== 'SESSION_EXPIRED' && !silent) showToast('Erreur réseau.', 'error')
+  } finally {
     isCheckingUpdate.value = false
-    showToast('Recherche terminée.', 'info')
-  }, 1000)
+  }
 }
 
 function installUpdate() {
@@ -259,6 +271,7 @@ const logLevelOptions = [
 
 onMounted(() => {
   loadSettings()
+  checkForUpdate(true)
 })
 
 function selectTab(tabId) {
@@ -489,7 +502,7 @@ async function saveSettings() {
               <i class="fas fa-cube"></i>
             </div>
             <div class="flex items-center gap-2">
-              <h4 class="font-black text-base text-slate-800 dark:text-slate-100">Mise à jour</h4>
+              <h4 class="font-black text-base text-slate-800 dark:text-slate-100">Version Actuelle</h4>
               <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase bg-blue-500/10 text-blue-500 border border-blue-500/20">
                 v{{ appVersion }}
               </span>
@@ -497,7 +510,7 @@ async function saveSettings() {
           </div>
 
           <button
-            @click="checkForUpdate"
+            @click="checkForUpdate()"
             :disabled="isCheckingUpdate"
             class="bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 px-4 py-2.5 rounded-xl font-bold text-xs transition-all flex items-center gap-2 active:scale-95"
           >

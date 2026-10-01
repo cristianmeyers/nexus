@@ -6,9 +6,11 @@ require("./config/db");
 
 const { ensureSchema } = require("./config/schema");
 const settingsRoutes = require("./routes/settings");
+const systemRoutes = require("./routes/system");
 const authRoutes = require("./routes/auth");
 const rolesRoutes = require("./routes/roles");
 const setupRoutes = require("./routes/setup");
+
 const adminRoutes = require("./routes/admin");
 
 const app = express();
@@ -33,6 +35,8 @@ app.use("/api/admin/settings", settingsRoutes);
 app.use("/api/admin", rolesRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/setup", setupRoutes);
+app.use("/api/system", systemRoutes);
+
 app.use("/api/admin", adminRoutes);
 
 app.listen(3000, () => {

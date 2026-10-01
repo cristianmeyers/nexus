@@ -1,32 +1,35 @@
-name: monapp   # fixe le nom du projet et du réseau (monapp_default)
+name: nexus   # fixe le nom du projet et du réseau (monapp_default)
 
 services:
   postgres:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: monapp
+      POSTGRES_USER: nexus
       POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: monapp
+      POSTGRES_DB: nexus
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U monapp -d monapp"]
+      test: ["CMD-SHELL", "pg_isready -U nexus -d nexus"]
       interval: 5s
       timeout: 3s
       retries: 10
 
   backend:
-    image: ghcr.io/cristianmeyers/monapp-backend:${APP_TAG}
+    image: ghcr.io/cristianmeyers/nexus-backend:${APP_TAG}
     restart: unless-stopped
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
-      DB_USER: monapp
+      DB_USER: nexus
       DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: monapp
+      DB_NAME: nexus
       DATA_DIR: /data
       RESTART_AFTER_SETUP: "true"
+      APP_VERSION: ${APP_TAG} 
+      UPDATER_URL: http://updater:4000
+      UPDATER_TOKEN: ${UPDATER_TOKEN}
     volumes:
       - appdata:/data
     depends_on:
@@ -34,7 +37,7 @@ services:
         condition: service_healthy
 
   frontend:
-    image: ghcr.io/cristianmeyers/monapp-frontend:${APP_TAG}
+    image: ghcr.io/cristianmeyers/nexus-frontend:${APP_TAG}
     restart: unless-stopped
     ports:
       - "80:80"
@@ -42,12 +45,12 @@ services:
       - backend
 
   updater:
-    image: ghcr.io/cristianmeyers/monapp-updater:${APP_TAG}
+    image: ghcr.io/cristianmeyers/nexus-updater:${APP_TAG}
     restart: unless-stopped
     environment:
       UPDATER_TOKEN: ${UPDATER_TOKEN}
       PROJECT_DIR: ${PROJECT_DIR}
-      NETWORK: monapp_default
+      NETWORK: nexus_default
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${PROJECT_DIR}:${PROJECT_DIR}   # même chemin que sur l'hôte (obligatoire)
